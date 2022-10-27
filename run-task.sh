@@ -6,9 +6,11 @@ for query_value in $(echo "$INPUT" | jq -r 'to_entries|map("\(.key|ascii_upcase)
   export "$query_value"
 done
 
+export AWS_DEFAULT_REGION="$REGION"
+
 OVERRIDE_TEMPLATE=$(echo "$OVERRIDE_TEMPLATE" | base64 -d)
 
-TASK_DETAILS=$(aws --region "$REGION" ecs run-task \
+TASK_DETAILS=$(aws ecs run-task \
   --overrides "$OVERRIDE_TEMPLATE" \
   --cluster "$CLUSTER_NAME" \
   --task-definition "$TASK_DEFINITION_ARN")
