@@ -60,13 +60,15 @@ terraform apply
 [//]: # (BEGIN_TF_DOCS)
 ### Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| external | ~> 2.2.2 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| external | n/a |
+| external | 2.2.2 |
 
 ### Modules
 
@@ -83,6 +85,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | override_template | The override_template map. For information about how to override a container definition check <a href='https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerOverride.html' target='_blank'>AWS ECS ContainerOverride documentation</a>. | `map(any)` | n/a | yes |
+| assume_role_arn | [OPTIONAL] Allow role to be assumed before creating the ECS container. This is useful to allow running migrations CrossAccount. Defaults: '' | `string` | `""` | no |
 | cluster_name | Cluster name where the migration will run. | `string` | n/a | yes |
 | migration_container_name | Name to be given to the new migration container. | `string` | n/a | yes |
 | region | Cluster AWS region | `string` | n/a | yes |

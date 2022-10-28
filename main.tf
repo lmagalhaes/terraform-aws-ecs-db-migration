@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    external = {
+      source = "hashicorp/external"
+     version = "~> 2.2.2"
+    }
+  }
+}
+
 data "external" "run_migration" {
   program = ["/bin/bash", "${path.module}/run-task.sh"]
 
