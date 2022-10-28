@@ -22,3 +22,9 @@ variable "region" {
   type        = string
   description = "Cluster AWS region"
 }
+
+variable "assume_role_arn" {
+  type        = string
+  description = "[OPTIONAL] Allow role to be assumed before creating the ECS container. This is useful to allow running migrations CrossAccount. Defaults: ''"
+  default     = ""
+}

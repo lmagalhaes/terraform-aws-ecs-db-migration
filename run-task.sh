@@ -8,6 +8,14 @@ done
 
 export AWS_DEFAULT_REGION="$REGION"
 
+# If ASSUME_ROLE_ARN is given
+if [[ "${ASSUME_ROLE_ARN}" != "" ]]; then
+  ASSUMED_ROLE_CREDENTIALS=$(aws sts assume-role --role-arn "$ASSUME_ROLE_ARN" --role-session-name 'migration-session')
+  export AWS_ACCESS_KEY_ID=$(echo $ASSUMED_ROLE_CREDENTIALS | jq -r '.Credentials.AccessKeyId')
+  export AWS_SECRET_ACCESS_KEY=$(echo $ASSUMED_ROLE_CREDENTIALS | jq -r '.Credentials.SecretAccessKey')
+  export AWS_SESSION_TOKEN=$(echo $ASSUMED_ROLE_CREDENTIALS | jq -r '.Credentials.SessionToken')
+fi;
+
 OVERRIDE_TEMPLATE=$(echo "$OVERRIDE_TEMPLATE" | base64 -d)
 
 TASK_DETAILS=$(aws ecs run-task \
@@ -28,6 +36,8 @@ MIGRATION_CONTAINER_DETAILS=$(aws ecs describe-tasks \
   --cluster "$CLUSTER_NAME" \
   --tasks "$TASK_ARN" \
   --query "tasks[0].containers[?name=='$MIGRATION_CONTAINER_NAME']" | jq -r '.[]')
+
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
 
 CONTAINER_EXIT_CODE=$(echo "$MIGRATION_CONTAINER_DETAILS" | jq -r '.exitCode')
 if [[ "$CONTAINER_EXIT_CODE" != "0" ]]; then
